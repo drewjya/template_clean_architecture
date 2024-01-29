@@ -3,7 +3,7 @@
 name = "Template Clean Architecture"
 port = ":8080"
 idle-timeout = 5 # As seconds
-print-routes = false
+print-routes = true
 prefork = true
 production = false
 
