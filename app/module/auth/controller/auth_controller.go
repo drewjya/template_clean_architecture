@@ -33,10 +33,9 @@ func (_i *authController) Login(c *fiber.Ctx) error {
 		return err
 	}
 	return response.Resp(c, response.Response{
-		Data: res,
-		Messages: response.Messages{
-			response.RootMessage("Login success"),
-		},
+		Data:     res,
+		Messages: response.RootMessage("Login success"),
+
 		Code: fiber.StatusOK,
 	})
 }
@@ -54,7 +53,7 @@ func (_i *authController) Register(c *fiber.Ctx) error {
 
 	return response.Resp(c, response.Response{
 		Data:     res,
-		Messages: response.Messages{response.RootMessage("Register success")},
+		Messages: response.RootMessage("Register success"),
 		Code:     fiber.StatusOK,
 	})
 }

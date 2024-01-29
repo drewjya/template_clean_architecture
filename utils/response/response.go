@@ -18,7 +18,7 @@ func RootMessage(message string) interface{} {
 	}
 }
 
-type Messages = []any
+type Messages = interface{}
 
 type Error struct {
 	Code    int `json:"code"`
@@ -51,22 +51,22 @@ var ErrorHandler = func(c *fiber.Ctx, err error) error {
 	fmt.Println(reflect.TypeOf(err))
 	if c, ok := err.(validator.ValidationErrors); ok {
 		resp.Code = fiber.StatusUnprocessableEntity
-		resp.Messages = Messages{removeTopStruct(c.Translate(trans))}
+		resp.Messages = removeTopStruct(c.Translate(trans))
 	} else if c, ok := err.(*fiber.Error); ok {
 		resp.Code = c.Code
-		resp.Messages = Messages{c.Message}
+		resp.Messages = RootMessage(c.Message)
 	} else if c, ok := err.(*Error); ok {
 		resp.Code = c.Code
-		resp.Messages = Messages{c.Message}
+		resp.Messages = c.Message
 
 		// for ent and other errors
 		if resp.Messages == nil {
-			resp.Messages = Messages{err}
+			resp.Messages = RootMessage(err.Error())
 		}
 	} else {
-		resp.Messages = Messages{
-			RootMessage(err.Error()),
-		}
+		resp.Messages =
+			RootMessage(err.Error())
+
 	}
 
 	if !IsProduction {
