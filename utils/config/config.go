@@ -22,11 +22,6 @@ type app = struct {
 	Prefork     bool          `toml:"prefork"`
 	Production  bool          `toml:"production"`
 	IdleTimeout time.Duration `toml:"idle-timeout"`
-	TLS         struct {
-		Enable   bool   `toml:"enable"`
-		CertFile string `toml:"cert-file"`
-		KeyFile  string `toml:"key-file"`
-	}
 }
 
 // db struct config
@@ -80,6 +75,8 @@ type middleware = struct {
 	Jwt struct {
 		Secret     string        `toml:"secret"`
 		Expiration time.Duration `toml:"expiration_seconds"`
+		AccessKey  string        `toml:"access_key"`
+		RefreshKey string        `toml:"refresh_key"`
 	}
 }
 
