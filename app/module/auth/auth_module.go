@@ -29,8 +29,10 @@ func NewAuthRouter(fiber *fiber.App, controller *controller.Controller) *AuthRou
 }
 
 func (_i *AuthRouter) RegisterAuthRoutes() {
-	// authController := _i.Controller.Auth
-	_i.App.Route("/auth", func(auth fiber.Router) {
 
+	authController := _i.Controller.Auth
+	_i.App.Route("/auth", func(auth fiber.Router) {
+		auth.Post("/login", authController.Login)
+		auth.Post("/register", authController.Register)
 	})
 }

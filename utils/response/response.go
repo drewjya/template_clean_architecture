@@ -11,6 +11,13 @@ import (
 )
 
 // Alias for any slice
+
+func RootMessage(message string) interface{} {
+	return fiber.Map{
+		"@root": message,
+	}
+}
+
 type Messages = []any
 
 type Error struct {
@@ -57,7 +64,9 @@ var ErrorHandler = func(c *fiber.Ctx, err error) error {
 			resp.Messages = Messages{err}
 		}
 	} else {
-		resp.Messages = Messages{err.Error()}
+		resp.Messages = Messages{
+			RootMessage(err.Error()),
+		}
 	}
 
 	if !IsProduction {

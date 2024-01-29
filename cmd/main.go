@@ -2,71 +2,55 @@ package main
 
 import (
 	"template_clean_architecture/app/middleware"
-	"time"
+	"template_clean_architecture/app/module/auth"
+	"template_clean_architecture/app/router"
+	"template_clean_architecture/internal/bootstrap"
+	"template_clean_architecture/internal/bootstrap/database"
+	"template_clean_architecture/utils/config"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v4"
+	fxzerolog "github.com/efectn/fx-zerolog"
+	"go.uber.org/fx"
 )
 
-// import "go.uber.org/fx"
-
-// func main() {
-// 	// fx.New().Run()
-// }
-
-func login(c *fiber.Ctx) error {
-	user := c.FormValue("user")
-	pass := c.FormValue("pass")
-
-	// Throws Unauthorized error
-	if user != "john" || pass != "doe" {
-		return c.SendStatus(fiber.StatusUnauthorized)
-	}
-
-	// Create the Claims
-	claims := jwt.MapClaims{
-		"name":  "John Doe",
-		"admin": true,
-		"exp":   time.Now().Add(time.Hour * 72).Unix(),
-	}
-
-	// Create token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	// Generate encoded token and send it as response.
-	t, err := token.SignedString([]byte("secret"))
-	if err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
-	}
-
-	return c.JSON(fiber.Map{"token": t})
-}
-
-func accessible(c *fiber.Ctx) error {
-	return c.SendString("Accessible")
-}
-
-func restricted(c *fiber.Ctx) error {
-	user := c.Locals("user").(*jwt.Token)
-	// claims := user.Claims.(middleware.JWTClaims)
-	// name := claims["name"].(string)
-	return c.JSON(fiber.Map{"user": user})
-}
-
+// @title                       Go Fiber Starter API Documentation
+// @version                     1.0
+// @description                 This is a sample API documentation.
+// @termsOfService              http://swagger.io/terms/
+// @contact.name                Developer
+// @contact.email               bangadam.dev@gmail.com
+// @license.name                Apache 2.0
+// @license.url                 http://www.apache.org/licenses/LICENSE-2.0.html
+// @host                        localhost:8080
+// @schemes                     http https
+// @securityDefinitions.apikey  Bearer
+// @in                          header
+// @name                        Authorization
+// @description                 "Type 'Bearer {TOKEN}' to correctly set the API Key"
+// @BasePath                    /
 func main() {
-	app := fiber.New()
+	fx.New(
+		/* provide patterns */
+		// config
+		fx.Provide(config.NewConfig),
+		// logging
+		fx.Provide(bootstrap.NewLogger),
+		// fiber
+		fx.Provide(bootstrap.NewFiber),
+		// database
+		fx.Provide(database.NewDatabase),
+		// middleware
+		fx.Provide(middleware.NewMiddleware),
+		// router
+		fx.Provide(router.NewRouter),
 
-	// Login route
-	app.Post("/login", login)
+		// provide modules
 
-	// Unauthenticated route
-	app.Get("/", accessible)
+		auth.NewAuthModule,
 
-	// JWT Middleware
-	app.Use(middleware.Protected(true))
+		// start aplication
+		fx.Invoke(bootstrap.Start),
 
-	// Restricted Routes
-	app.Get("/restricted", restricted)
-
-	app.Listen(":4000")
+		// define logger
+		fx.WithLogger(fxzerolog.Init()),
+	).Run()
 }

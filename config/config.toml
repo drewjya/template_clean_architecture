@@ -1,7 +1,7 @@
 # Configuration vars for cmd/app
 [app]
 name = "Template Clean Architecture"
-port = ":8080"
+port = ":4444"
 idle-timeout = 5 # As seconds
 print-routes = true
 prefork = true

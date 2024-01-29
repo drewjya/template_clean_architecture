@@ -10,9 +10,9 @@ import (
 type User struct {
 	gorm.Model
 	Account        Account   `gorm:"foreignKey:user_id"`
-	Password       string    `gorm:"column:password;not null"`
-	Email          string    `gorm:"column:email;unique;not null"`
-	LastAccessedAt time.Time `gorm:"column:last_accessed_at"`
+	Password       string    `gorm:"column:password;not null" json:"-"`
+	Email          string    `gorm:"column:email;unique;not null" json:"email"`
+	LastAccessedAt time.Time `gorm:"column:last_accessed_at" json:"-"`
 }
 
 // compare password

@@ -2,6 +2,8 @@ package seeds
 
 import (
 	"template_clean_architecture/app/database/schema"
+	"template_clean_architecture/internal/bootstrap/seeder"
+
 	"template_clean_architecture/utils/helpers"
 	"time"
 
@@ -9,6 +11,10 @@ import (
 )
 
 type UserSeeder struct{}
+
+func NewUserSeeder() seeder.Seeder {
+	return UserSeeder{}
+}
 
 func (UserSeeder) Seed(conn *gorm.DB) error {
 	password, err := helpers.Hash("password")

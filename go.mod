@@ -39,6 +39,7 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
+	github.com/efectn/fx-zerolog v1.1.0
 	github.com/go-playground/validator/v10 v10.17.0
 	github.com/gofiber/jwt/v2 v2.2.7
 	github.com/gofiber/swagger v0.1.14

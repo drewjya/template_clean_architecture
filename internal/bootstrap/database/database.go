@@ -1,6 +1,9 @@
 package database
 
 import (
+	"template_clean_architecture/app/database/schema"
+	"template_clean_architecture/app/database/seeds"
+	"template_clean_architecture/internal/bootstrap/seeder"
 	"template_clean_architecture/utils/config"
 
 	"github.com/rs/zerolog"
@@ -12,11 +15,6 @@ type Database struct {
 	DB  *gorm.DB
 	Log zerolog.Logger
 	Cfg *config.Config
-}
-
-type Seeder interface {
-	Seed(*gorm.DB) error
-	Count() (int, error)
 }
 
 func NewDatabase(cfg *config.Config, log zerolog.Logger) *Database {
@@ -69,14 +67,19 @@ func (_db *Database) ResetModels() {
 // list of models for migration
 func Models() []interface{} {
 	return []interface{}{
-		// &model.User{},
+		schema.User{},
+		schema.Account{},
 	}
 }
 
 // seed data
-func (_db *Database) SeedModels(seeder ...Seeder) {
+func (_db *Database) SeedModels() {
+	user := seeds.NewUserSeeder()
+	seeder := []seeder.Seeder{
+		user,
+	}
 	for _, seed := range seeder {
-		count, err := seed.Count()
+		count, err := seed.Count(_db.DB)
 		if err != nil {
 			_db.Log.Error().Err(err).Msg("An unknown error occurred when to seed the database!")
 		}
